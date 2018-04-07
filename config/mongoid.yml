@@ -135,3 +135,9 @@ test:
         read:
           mode: :primary
         max_pool_size: 1
+production:
+    clients:
+        default:
+            uri: mongodb://admin:admin@ds237489.mlab.com:37489/coursera_racers
+            option:
+                connect_timeout: 15
