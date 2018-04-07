@@ -138,6 +138,6 @@ test:
 production:
     clients:
         default:
-            uri: mongodb://admin:admin@ds237489.mlab.com:37489/coursera_racers
+            uri: <%= ENV['MONGOLAB_URI'] %>
             option:
                 connect_timeout: 15
