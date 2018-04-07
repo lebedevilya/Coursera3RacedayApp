@@ -27,6 +27,18 @@ class Racer
     self.mongo_client['racers']
   end
 
+  def save
+    Rails.logger.debug {"saving #{self}"}
+    result = self.class.collection.insert_one({_id:@id,
+    				  number:@number,
+                      first_name:@first_name, 
+                      last_name:@last_name,
+                      gender:@gender,
+                      group:@group,
+                      secs:@secs})
+    @id = result.inserted_id.to_s
+  end
+   
   def self.all(prototype={}, sort={:number => 1}, skip=0, limit=nil)
    result = collection.find(prototype)        
    .projection({_id:true, number:true, first_name:true, last_name:true, gender:true, group:true, secs:true})        
