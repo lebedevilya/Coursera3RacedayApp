@@ -1,11 +1,16 @@
 class Racer
 
   attr_accessor :id, :number, :first_name, :last_name, :gender, :group, :secs
-
+  include ActiveModel::Model
   include Mongoid::Document
+  include Mongoid::Attributes::Dynamic
 
   def id
   	@id.to_s
+  end
+
+  def persisted?
+    !@id.nil?
   end
 
   def mongo_client
@@ -59,6 +64,13 @@ class Racer
   	self.class.collection.find({:number => @number}).delete_one
   end
 
+  def created_at
+    nil
+  end
+
+  def updated_at
+    nil
+  end
 
   def self.all(prototype={}, sort={:number => 1}, skip=0, limit=nil)
    result = collection.find(prototype)        
@@ -74,6 +86,23 @@ class Racer
   	id = id.to_s
   	result = collection.find({:_id => BSON::ObjectId(id)}).first
   	return result.nil? ? nil : Racer.new(result)
+  end
+
+  def self.paginate(params)
+  	page = (params[:page] || 1).to_i
+  	limit = (params[:per_page] || 30).to_i
+  	skip = (page - 1) * limit
+  	sort = {:number => 1}
+  	racers = []
+  	all({}, sort, skip, limit).each do |doc|
+  		racers << Racer.new(doc)
+  	end
+  	total = all({}, sort, 0, 1).count
+  	
+  	WillPaginate::Collection.create(page, limit, total) do |pager|
+  		pager.replace(racers)
+  	end
+
   end
 
 end
