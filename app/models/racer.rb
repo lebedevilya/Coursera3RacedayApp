@@ -38,7 +38,28 @@ class Racer
                       secs:@secs})
     @id = result.inserted_id.to_s
   end
-   
+
+  def update(params)
+  	@number=params[:number].to_i
+  	@first_name=params[:first_name]
+  	@last_name=params[:last_name]
+  	@gender=params[:gender]
+  	@group=params[:group]
+  	@secs=params[:secs].to_i
+  	params.slice!(:number, :first_name, :last_name, :gender, :group, :secs)
+  	self.class.collection.find({:_id => BSON::ObjectId(id)}).update_one({number:@number,
+                      first_name:@first_name, 
+                      last_name:@last_name,
+                      gender:@gender,
+                      group:@group,
+                      secs:@secs})
+  end
+  
+  def destroy
+  	self.class.collection.find({:number => @number}).delete_one
+  end
+
+
   def self.all(prototype={}, sort={:number => 1}, skip=0, limit=nil)
    result = collection.find(prototype)        
    .projection({_id:true, number:true, first_name:true, last_name:true, gender:true, group:true, secs:true})        
