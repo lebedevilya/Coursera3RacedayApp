@@ -141,3 +141,4 @@ production:
             uri: <%= ENV['MONGOLAB_URI'] %>
             option:
                 connect_timeout: 15
+                skip_version_check: true
